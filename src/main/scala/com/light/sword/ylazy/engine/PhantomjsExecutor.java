@@ -22,8 +22,8 @@ public class PhantomjsExecutor {
     PhantomjsConfig phantomjsConfig;
 
     public String getPhantomJSEnv() {
-        String binPath = phantomjsConfig.getBinPath();
-        String netsniffPath = phantomjsConfig.getNetsniffPath();
+        String binPath = phantomjsConfig.getBinPathMac();
+        String netsniffPath = phantomjsConfig.getNetsniffPathMac();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("binPath", binPath);
         jsonObject.put("netsniffPath", netsniffPath);
@@ -31,17 +31,17 @@ public class PhantomjsExecutor {
     }
 
     public Map<String, String> getPhantomJSEnvMap() {
-        String binPath = phantomjsConfig.getBinPath();
-        String netsniffPath = phantomjsConfig.getNetsniffPath();
+        String binPath = phantomjsConfig.getBinPathMac();
+        String netsniffPath = phantomjsConfig.getNetsniffPathMac();
         Map jsonObject = new HashMap();
         jsonObject.put("binPath", binPath);
         jsonObject.put("netsniffPath", netsniffPath);
         return jsonObject;
     }
 
-    public String netSniff(String url){
-        String binPath = phantomjsConfig.getBinPath();
-        String netsniffPath = phantomjsConfig.getNetsniffPath();
+    public String ylazy(String url){
+        String binPath = phantomjsConfig.getBinPathMac();
+        String netsniffPath = phantomjsConfig.getNetsniffPathMac();
         String cmd = binPath + " " + netsniffPath + " " + url;
         log.info(cmd);
         return ShellExecutor.runShell(cmd);

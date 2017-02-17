@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.{RequestMapping, RequestMethod, RequestParam, ResponseBody}
 
 @Controller
-class PhantomjsEnvController @Autowired()(val phantomjsExecutor: PhantomjsExecutor) {
+class PhantomjsController @Autowired()(val phantomjsExecutor: PhantomjsExecutor) {
   @RequestMapping(value = {
     Array("/phantomenv.do")
   }, method = Array(RequestMethod.GET))
@@ -18,6 +18,6 @@ class PhantomjsEnvController @Autowired()(val phantomjsExecutor: PhantomjsExecut
     Array("/ylazy.do")
   }, method = Array(RequestMethod.GET))
   @ResponseBody
-  def ylazy(@RequestParam(value = "url") url:String) = phantomjsExecutor.netSniff(url)
+  def ylazy(@RequestParam(value = "url") url:String) = phantomjsExecutor.ylazy(url)
 
 }

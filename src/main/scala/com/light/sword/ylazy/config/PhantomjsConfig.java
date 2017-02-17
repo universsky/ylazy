@@ -10,22 +10,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "phantomjs", locations = "classpath:phantomjs.properties")
 public class PhantomjsConfig {
-    private String binPath;
-    private String netsniffPath;
+    private String binPathMac;
+    private String netsniffPathMac;
 
-    public String getBinPath() {
-        return binPath;
+    public String getBinPathMac() {
+        return binPathMac;
     }
 
-    public void setBinPath(String binPath) {
-        this.binPath = binPath;
+    public void setBinPathMac(String binPathMac) {
+        this.binPathMac = binPathMac;
     }
 
-    public String getNetsniffPath() {
-        return netsniffPath;
+    public String getNetsniffPathMac() {
+        return netsniffPathMac;
     }
 
-    public void setNetsniffPath(String netsniffPath) {
-        this.netsniffPath = netsniffPath;
+    public void setNetsniffPathMac(String netsniffPathMac) {
+        this.netsniffPathMac = netsniffPathMac;
     }
 }

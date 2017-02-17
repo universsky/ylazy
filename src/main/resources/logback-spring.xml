@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<springProperty scope="context" name="logging.file"
+		source="logging.file" />
+	<springProperty scope="context" name="logging.path"
+		source="logging.path" />
+	<springProperty scope="context" name="spring.application.name"
+		source="spring.application.name" />
+	<property name="LOG_FILE"
+		value="${logging.path:-.}/${logging.file:-${spring.application.name:-spring}.log}" />
+
+	<include resource="org/springframework/boot/logging/logback/base.xml" />
+	<jmxConfigurator />
+
+	<logger name="org.apache.velocity.runtime.log" level="ON" />
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+	</root>
+</configuration>

@@ -1,0 +1,119 @@
+#parse("/common/header.html")
+
+<div class="box">
+    <ol class="breadcrumb teda-guide">
+        <li><a href="/httpsuite">http用例集管理</a></li>
+        <li><a href="#">$httpSuiteName</a></li>
+
+    </ol>
+
+    <button id='testHttpSuite' class='btn btn-warning left-btn'>回归测试</button>
+
+    <a href="/httpapi/newPage/$httpSuiteId" class='btn btn-info right-btn'>新建用例</a>
+
+
+    <table id="dataTable"
+           class="table table-hover table-condensed table-responsive">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>用例名称</th>
+            <th>URL</th>
+            <th>方法</th>
+            <th>期望输出</th>
+            <th>次数</th>
+            <th>状态</th>
+            <th>创建人</th>
+            <th>调用时间</th>
+            <th>操作</th>
+            <th>执行测试</th>
+        </tr>
+        </thead>
+        <tbody>
+        #foreach ($t in $httpapis)
+        <tr>
+            <td>$!t.id</td>
+            <td>$!t.name</td>
+            <td>$!t.url</td>
+            <td>$!t.method</td>
+            <td>$!t.expectOutput</td>
+            <td>$!t.runTimes</td>
+            #if($!t.state==1)
+            <td>
+                <div class="btn btn-success">成功</div>
+            </td>
+            #elseif($!t.state==0)
+            <td>
+                <div class="btn btn-danger">失败</div>
+            </td>
+            #else
+            <td>
+                <div class="btn btn-info">未执行</div>
+            </td>
+            #end
+            <td>$!t.owner</td>
+            <td>$!DateTool.format('yyyy-MM-dd HH:mm:ss', $!t.gmtModify)</td>
+            <td><a
+                    href="/httpapi/editPage/$t.id?httpSuiteId=$t.httpSuiteId">编辑</a> <a
+                    href="/httpapi/copyPage/$t.id?httpSuiteId=$t.httpSuiteId">克隆</a> <a
+                    href="/httpapi/detailPage/$t.id">查看</a></td>
+
+            <td>
+                <div id='btn-$t.id' class='btn btn-primary'
+                     onclick='runTest($t.id)'>运行
+                </div>
+            </td>
+        </tr>
+        #end
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>
+    function runTest(id) {
+        var url = '/httpapi/runTest?id=' + id
+        $.getJSON(url, function (data) {
+            if (data) {
+                alert('响应结果:' + JSON.stringify(data, null, 2))
+                location.reload()
+            } else {
+                alert('执行失败')
+            }
+        })
+    }
+
+    $(function () {
+        var httpSuiteId = $httpSuiteId
+        var url = '/httpapi/testHttpSuite?httpSuiteId=' + httpSuiteId
+        $('#testHttpSuite').on(
+                'click',
+                function () {
+                    $.getJSON(url, function (data) {
+                        if (data) {
+                            alert('回归测试结果:' + JSON.stringify(data, null, 2))
+                            location.reload()
+                        } else {
+                            alert('亲,系统压力太大~')
+                        }
+                    })
+                })
+
+
+        $('#dataTable').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true
+        })
+
+    })
+</script>
+
+
+#parse("/common/footer.html")
+
+

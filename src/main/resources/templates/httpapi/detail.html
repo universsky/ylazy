@@ -1,0 +1,96 @@
+#parse("/common/header.html")
+<ol class="breadcrumb teda-guide">
+    <li><a href='#' id='goBack' onclick='history.go(-1)'>返回</a></li>
+    <li><a href='#'>用例详情</a></li>
+</ol>
+<div class="form-horizontal" role="form">
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">用例名称</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="tcname"
+                   value="$httpapi.name" readOnly='true'>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">执行状态</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="state"
+                   value="$httpapi.state" readOnly='true'>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">接口</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="url"
+                   value="$httpapi.url" readOnly='true'>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">方法</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="method"
+                   value="$httpapi.method" readOnly='true'>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">输入参数</label>
+        <div class="col-sm-10">
+            <div id="jsoneditor-inputParamJsonStr" class="jsoneditor"></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">期望输出</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="expectOutput"
+                   value='$httpapi.expectOutput' readOnly='true'>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">实际输出</label>
+        <div class="col-sm-10">
+            <div id="jsoneditor-actualOutputJsonStr" class="jsoneditor"></div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        // create the editor
+        var containerInputParamJsonStr = document
+                .getElementById("jsoneditor-inputParamJsonStr")
+        var containerActualOutputJsonStr = document
+                .getElementById("jsoneditor-actualOutputJsonStr")
+        var options = {
+            mode: 'tree',
+            modes: ['form', 'text', 'tree', 'view'], // allowed modes
+            onError: function (err) {
+                alert(err.toString());
+            },
+            onModeChange: function (newMode, oldMode) {
+                console.log('Mode switched from', oldMode, 'to', newMode);
+            }
+        };
+        var editorInputParamJsonStr = new JSONEditor(
+                containerInputParamJsonStr, options)
+        var editorActualOutputJsonStr = new JSONEditor(
+                containerActualOutputJsonStr, options)
+
+        editorInputParamJsonStr.set($httpapi.paramJsonStr)
+        editorActualOutputJsonStr.set($httpapi.actualOutput)
+
+    })
+</script>
+
+
+#parse("/common/footer.html")
+

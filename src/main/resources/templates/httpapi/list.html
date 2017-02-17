@@ -1,0 +1,88 @@
+#parse("/common/header.html")
+
+<div class="box">
+    <table id="dataTable"
+           class="table table-hover table-condensed table-responsive">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>用例名称</th>
+            <th>URL</th>
+            <th>方法</th>
+            <th>期望输出</th>
+            <th>次数</th>
+            <th>状态</th>
+            <th>创建人</th>
+            <th>调用时间</th>
+            <th>操作</th>
+            <th>执行测试</th>
+        </tr>
+        </thead>
+        <tbody>
+        #foreach ($t in $httpapis)
+        <tr>
+            <td>$t.id</td>
+            <td>$t.name</td>
+            <td>$t.url</td>
+            <td>$t.method</td>
+            <td>$t.expectOutput</td>
+            <td>$t.runTimes</td>
+            #if($t.state==1)
+            <td>
+                <p class="btn btn-success">成功</p>
+            </td>
+            #elseif($t.state==0)
+            <td>
+                <p class="btn btn-danger">失败</p>
+            </td>
+            #else
+            <td>
+                <p class="btn btn-info">未执行</p>
+            </td>
+            #end
+            <td>$t.owner</td>
+            <td>$DateTool.format('yyyy-MM-dd HH:mm:ss', $!t.gmtModify)</td>
+            <td><a href="/httpapi/detailPage/$t.id">查看</a></td>
+            <td>
+                <p id='btn-$t.id' class='btn btn-primary'
+                   onclick='runTest($t.id)'>运行
+                </p>
+            </td>
+        </tr>
+        #end
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function runTest(id) {
+        var url = '/httpapi/runTest?id=' + id
+        $.getJSON(url, function (data) {
+            if (data) {
+                alert('响应结果:' + JSON.stringify(data, null, 2))
+                location.reload()
+            } else {
+                alert('执行失败')
+            }
+        })
+    }
+
+    $(function () {
+
+        $('#dataTable').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true
+        })
+    })
+
+</script>
+
+
+#parse("/common/footer.html")
+
+

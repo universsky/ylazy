@@ -1,0 +1,163 @@
+#parse("/common/header.html")
+
+<ol class="breadcrumb teda-guide">
+    <li><a href='/httpapi/listHttpSuiteTestCase/$httpSuiteId'>$!httpSuiteName</a></li>
+    <li><a href="#">(克隆)创建用例</a></li>
+</ol>
+
+<div class="form-horizontal" role="form">
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">用例名称</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="tcname"
+                   value="$httpapi.name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">url</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="url"
+                   value="$httpapi.url">
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label class="col-sm-2 control-label teda-label">请求方法</label>
+    <div class="col-sm-10">
+        <select class="form-control teda-form" name="s-method" id="s-method">
+            <option value='GET'>GET</option>
+            <option value='POST'>POST</option>
+        </select>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label class="col-sm-2 control-label teda-label">输入参数</label>
+    <div class="col-sm-10">
+        <div id="jsoneditor-inputParamJsonStr" class="myjsoneditor"></div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label teda-label">期望输出</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control teda-form" name="expectOutput"
+               id="expectOutput" value="$httpapi.expectOutput">
+        <button id="bt-run-testcase" class="btn btn-info">调试用例</button>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label teda-label">实际输出</label>
+    <div class="col-sm-10">
+        <div id="jsoneditor-actualOutputJsonStr" class="myjsoneditor"></div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label teda-label">创建人</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control teda-form" name="owner"
+               value="$httpapi.owner">
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+        <a class="btn btn-success" id="bt-tedacase-new">创&nbsp;&nbsp;&nbsp;建</a>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        var httpSuiteId, name, url, paramJsonStr, owner, method, expectOutput, actualOutput
+
+        // create the editor
+        var containerInputParamJsonStr = document
+                .getElementById("jsoneditor-inputParamJsonStr")
+        var containerActualOutputJsonStr = document
+                .getElementById("jsoneditor-actualOutputJsonStr")
+        var options = {
+            mode: 'text',
+            //modes : [ 'code', 'form', 'text', 'tree', 'view' ], // allowed modes
+            modes: ['form', 'text', 'tree', 'view'], // allowed modes
+            onError: function (err) {
+                alert(err.toString());
+            },
+            onModeChange: function (newMode, oldMode) {
+                console.log('Mode switched from', oldMode, 'to', newMode);
+            }
+        };
+        var editorInputParamJsonStr = new JSONEditor(
+                containerInputParamJsonStr, options)
+        var editorActualOutputJsonStr = new JSONEditor(
+                containerActualOutputJsonStr, options)
+
+        editorInputParamJsonStr.set($httpapi.paramJsonStr)
+
+        // 执行用例
+        $('#bt-run-testcase').on(
+                'click',
+                function () {
+                    url = $("input[name='url']").val()
+                    method = $('select[name="s-method"]').val()
+                    paramJsonStr = JSON
+                            .stringify(editorInputParamJsonStr.get())
+                    var url = '/httpapi/debugTest?url=' + url + '&method='
+                            + method + '&paramJsonStr=' + paramJsonStr
+
+                    $.getJSON(url, function (data) {
+                        editorActualOutputJsonStr.set(data)
+                    })
+                })
+
+        // 新建接口用例
+        $("#bt-tedacase-new")
+                .on(
+                        'click',
+                        function () {
+                            httpSuiteId = $httpSuiteId
+                            name = $("input[name='tcname']").val()
+                            url = $("input[name='url']").val()
+                            method = $('select[name="s-method"]').val()
+                            expectOutput = $("input[name='expectOutput']")
+                                    .val()
+                            paramJsonStr = JSON
+                                    .stringify(editorInputParamJsonStr.get())
+                            actualOutput = JSON
+                                    .stringify(editorActualOutputJsonStr.get())
+
+                            owner = $("input[name='owner']").val()
+
+                            $.post(
+                                    "/httpapi/postnew",
+                                    {
+                                        httpSuiteId: httpSuiteId,
+                                        name: name,
+                                        url: url,
+                                        method: method,
+                                        paramJsonStr: paramJsonStr,
+                                        expectOutput: expectOutput,
+                                        actualOutput: actualOutput,
+                                        owner: owner
+                                    },
+                                    function (data) {
+                                        if (data) {
+                                            window.location.href = '/httpapi/listHttpSuiteTestCase?httpSuiteId='
+                                                    + httpSuiteId
+                                        } else {
+                                            alert("新建失败")
+                                        }
+                                    })
+                        })
+
+    })
+</script>
+
+
+#parse("/common/footer.html")

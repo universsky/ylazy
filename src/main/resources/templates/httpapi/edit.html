@@ -1,0 +1,108 @@
+#parse("/common/header.html")
+<ol class="breadcrumb teda-guide">
+    <li><a href='/httpapi/listHttpSuiteTestCase/$httpSuiteId'>$httpSuiteName</a></li>
+    <li><a href="#">编辑用例</a></li>
+</ol>
+<div class="form-horizontal" role="form">
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">用例名称</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="tcname"
+                   value="$httpapi.name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">接口</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="url"
+                   value="$httpapi.url">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">方法</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="method"
+                   value="$httpapi.method">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">输入参数</label>
+        <div class="col-sm-10">
+            <div id="jsoneditor-inputParamJsonStr" class="myjsoneditor"></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label teda-label">期望输出</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control teda-form" name="expectOutput"
+                   value='$httpapi.expectOutput'>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a class="btn btn-success" id="bt-tedacase-save">保&nbsp;&nbsp;&nbsp;存</a>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(function () {
+        // create the editor
+        var containerInputParamJsonStr = document
+                .getElementById("jsoneditor-inputParamJsonStr")
+        var options = {
+            mode: 'text',
+            modes: ['form', 'text', 'tree', 'view'], // allowed modes
+            onError: function (err) {
+                alert(err.toString());
+            },
+            onModeChange: function (newMode, oldMode) {
+                console.log('Mode switched from', oldMode, 'to', newMode);
+            }
+        };
+        var editorInputParamJsonStr = new JSONEditor(containerInputParamJsonStr, options)
+
+        editorInputParamJsonStr.set($httpapi.paramJsonStr)
+
+        $("#bt-tedacase-save")
+                .on(
+                        'click',
+                        function () {
+                            var id = $httpapi.id
+                            var name = $("input[name='tcname']").val()
+                            var url = $("input[name='url']").val()
+                            var method = $('input[name="method"]').val()
+                            var expectOutput = $("input[name='expectOutput']")
+                                    .val()
+                            var paramJsonStr = JSON.stringify(editorInputParamJsonStr.get())
+
+                            $.post("/httpapi/postedit",
+                                    {
+                                        id: id,
+                                        name: name,
+                                        url: url,
+                                        method: method,
+                                        paramJsonStr: paramJsonStr,
+                                        expectOutput: expectOutput
+                                    },
+                                    function (data) {
+                                        if (data) {
+                                            window.location.href = window.location.href = '/httpapi/listHttpSuiteTestCase?httpSuiteId='
+                                                    + $httpSuiteId
+                                        } else {
+                                            alert("保存失败")
+                                        }
+                                    });
+
+                        });
+    });
+</script>
+
+
+#parse("/common/footer.html")

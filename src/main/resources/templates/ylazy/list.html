@@ -1,0 +1,264 @@
+#parse("/common/header.html")
+#parse("/common/aside.html")
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            YLazy
+            <small>Web性能测试平台</small>
+        </h1>
+        <!--<ol class="breadcrumb">-->
+        <!--<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>-->
+        <!--<li class="active">Dashboard</li>-->
+        <!--</ol>-->
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="box box-success">
+                <div class="box-header">
+                    <i class="fa fa-sticky-note-o"></i>
+                    <h3 class="box-title">新增任务</h3>
+                </div>
+
+                <form class="box-body" id="newTaskForm">
+                    <div class="form-group">
+                        <label>任务名称</label>
+                        <input name='name' class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input name='url' class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <button id='newTaskBtn' type="button" class="btn btn-success">
+                            <i class="fa fa-plus"></i>
+                            添加
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="box box-success">
+                <div class="box-header">
+                    <i class="fa fa-list-alt"></i>
+                    <h3 class="box-title">任务列表</h3>
+                </div>
+                <div class="box-body">
+                    <table id="dataTable"
+                           class="table table-hover table-condensed table-responsive">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>名称</th>
+                            <th>URL</th>
+                            <th>更新时间</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        #foreach ($t in $lazyTaskList)
+                        <tr>
+                            <td>$!t.id</td>
+                            <td>$!t.name</td>
+                            <td>$!t.url</td>
+                            <td>$!DateTool.format('yyyy-MM-dd HH:mm:ss', $t.gmtModify)</td>
+                            <td>
+                                <a target="_blank"
+                                   href="harviewer/index.htm?path=http://$domainName:$port/result/$!t.id">查看</a>
+                            </td>
+                            <td>
+                                <button id='btn-$t.id'
+                                        type="button"
+                                        data-loading-text="执行中"
+                                        class='btn-sm btn-success text-center'
+                                        autocomplete="off"
+                                        onclick='runTest($t.id,this)'>运行
+                                </button>
+                            </td>
+                        </tr>
+                        #end
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<script>
+    function runTest(id, thisBtn) {
+        $(thisBtn).button('loading')
+        $(thisBtn).attr('disabled', 'disabled')
+
+        /**
+         * 运行任务
+         */
+        var url = 'ylazy/runTask?id=' + id;
+
+        $.ajax({
+            url: url,
+            success: function (data) {
+                if (data) {
+                    $(thisBtn).button('reset');
+
+                    BootstrapDialog.show({
+                        title: '运行任务',
+                        message: '执行成功',
+                        type: BootstrapDialog.TYPE_DEFAULT,
+                        closable: false,
+                        cssClass: 'dialog_mar',
+                        buttons: [{
+                            label: '确认',
+                            cssClass: 'con_btn',
+                            action: function (dialogRef) {
+                                dialogRef.close();
+                                var hostName = "http://$domainName:$port";
+                                var openUrl = hostName + "/harviewer/index.htm?path=" + hostName + "/result/" + id;
+                                window.open(openUrl);
+                            }
+                        }, {
+                            label: '取消',
+                            action: function (dialogRef) {
+                                dialogRef.close();
+                            }
+                        }]
+                    });
+
+                } else {
+                    $(thisBtn).button('reset');
+
+                    BootstrapDialog.show({
+                        title: '运行任务',
+                        message: '执行失败',
+                        type: BootstrapDialog.TYPE_DANGER,
+                        closable: false,
+                        cssClass: 'dialog_mar',
+                        buttons: [{
+                            label: '确认',
+                            cssClass: 'con_btn',
+                            action: function (dialogRef) {
+                                dialogRef.close();
+                            }
+                        }, {
+                            label: '取消',
+                            action: function (dialogRef) {
+                                dialogRef.close();
+                            }
+                        }]
+                    });
+                }
+            }
+        });
+
+    }
+
+    $(function () {
+
+        $('#newTaskBtn').on('click', function () {
+            var data = $('#newTaskForm').serialize();
+            var url = 'ylazy/newTask';
+            //新增任务
+            $.ajax({
+                url: url,
+                data: data,
+                type: 'POST',
+                success: function (result) {
+                    if (result) {
+                        BootstrapDialog.show({
+                            title: '新增任务',
+                            message: '响应结果:' + JSON.stringify(result, null, 2),
+                            type: BootstrapDialog.TYPE_SUCCESS,
+                            closable: false,
+                            cssClass: 'dialog_mar',
+                            buttons: [{
+                                label: '确认',
+                                cssClass: 'con_btn',
+                                action: function (dialogRef) {
+                                    dialogRef.close();
+                                    location.reload();
+                                }
+                            }, {
+                                label: '取消',
+                                action: function (dialogRef) {
+                                    dialogRef.close();
+                                }
+                            }]
+                        });
+
+                    } else {
+                        BootstrapDialog.show({
+                            title: '新增任务',
+                            message: '添加失败', type: BootstrapDialog.TYPE_DANGER,
+                            closable: false,
+                            cssClass: 'dialog_mar',
+                            buttons: [{
+                                label: '确认',
+                                cssClass: 'con_btn',
+                                action: function (dialogRef) {
+                                    dialogRef.close();
+                                    location.reload();
+                                }
+                            }, {
+                                label: '取消',
+                                action: function (dialogRef) {
+                                    dialogRef.close();
+                                }
+                            }]
+                        });
+                    }
+                }
+            });
+
+        });
+
+        //任务列表datatables
+        var dataTableOptions = {
+            "bDestroy": true,
+            dom: 'lfrtip',
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": true,
+            "processing": true,
+            "stateSave": true,
+            responsive: true,
+            fixedHeader: false,
+            order: [[3, "desc"]],
+            "aLengthMenu": [7, 10, 20, 50, 100, 200],
+            language: {
+                "search": "<div style='border-radius:10px;margin-left:auto;margin-right:2px;width:760px;'>_INPUT_ &nbsp;<span class='btn btn-primary'>搜索</span></div>",
+
+                paginate: {//分页的样式内容
+                    previous: "上一页",
+                    next: "下一页",
+                    first: "第一页",
+                    last: "最后"
+                }
+            },
+            zeroRecords: "没有内容",//table tbody内容为空时，tbody的内容。
+            //下面三者构成了总体的左下角的内容。
+            info: "总计 _TOTAL_ 条,共 _PAGES_ 页，_START_ - _END_ ",//左下角的信息显示，大写的词为关键字。
+            infoEmpty: "0条记录",//筛选为空时左下角的显示。
+            infoFiltered: ""//筛选之后的左下角筛选提示
+        };
+
+        $('#dataTable').DataTable(dataTableOptions);
+    })
+</script>
+
+#parse("/common/footer.html")
+
+

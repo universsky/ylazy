@@ -8,16 +8,11 @@ import org.springframework.web.bind.annotation.{RequestMapping, RequestMethod, R
 @Controller
 class PhantomjsController @Autowired()(val phantomjsExecutor: PhantomjsExecutor) {
   @RequestMapping(value = {
-    Array("/phantomenv.do")
+    Array("/phantomenv")
   }, method = Array(RequestMethod.GET))
   @ResponseBody
   def phantomenv() = phantomjsExecutor.getPhantomJSEnv
 
 
-  @RequestMapping(value = {
-    Array("/ylazy.do")
-  }, method = Array(RequestMethod.GET))
-  @ResponseBody
-  def ylazy(@RequestParam(value = "url") url:String) = phantomjsExecutor.ylazy(url)
 
 }

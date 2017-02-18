@@ -16,17 +16,19 @@ public class ShellExecutor {
         StringBuffer lineList = new StringBuffer();
 
         try {
-            Process process = Runtime.getRuntime().exec(cmd);
-            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line = "";
-            while ((line = input.readLine()) != null) {
-                lineList.append(line);
-            }
-            input.close();
+            synchronized (ShellExecutor.class) {
+                Process process = Runtime.getRuntime().exec(cmd);
+                BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line = "";
+                while ((line = input.readLine()) != null) {
+                    lineList.append(line);
+                }
+                input.close();
 
-            int exitValue = process.waitFor();
-            if (0 != exitValue) {
-                log.error("call shell failed. error code is :" + exitValue);
+                int exitValue = process.waitFor();
+                if (0 != exitValue) {
+                    log.error("call shell failed. error code is :" + exitValue);
+                }
             }
         } catch (Throwable e) {
             log.error("call shell failed. " + e);

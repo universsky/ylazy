@@ -6,6 +6,6 @@ import org.springframework.web.servlet.ModelAndView
 
 @Controller
 class MainController {
-  @RequestMapping(value = { Array("/main.do") }, method = Array(RequestMethod.GET))
+  @RequestMapping(value = { Array("/main.do","/","/index","/home") }, method = Array(RequestMethod.GET))
   def about() = new ModelAndView("ylazy/main")
 }

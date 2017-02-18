@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,17 +44,50 @@ public class PhantomjsExecutor {
         return jsonObject;
     }
 
-    public String ylazy(String url){
+    /**
+     * 执行引擎debugTest接口用
+     * 不存入数据库
+     * @param url
+     * @return
+     */
+    public String ylazy(String url) {
         String binPath = phantomjsConfig.getBinPathMac();
         String netsniffPath = phantomjsConfig.getNetsniffPathMac();
         String cmd = binPath + " " + netsniffPath + " " + url;
         log.info(cmd);
         String result = ShellExecutor.runShell(cmd);
         result = result.substring(result.indexOf("{    \"log\": {"));//截取正式的json输出
-        LazyTask t = new LazyTask();
-        t.setUrl(url);
-        t.setResultJson(result);
-        lazyTaskDao.save(t);
+        return result;
+    }
+
+    /**
+     * 执行引擎
+     * 入库
+     * @param id
+     * @return
+     */
+    public String ylazyById(Integer id) {
+        LazyTask task = lazyTaskDao.findOne(id);
+        if (null == task) return "";
+
+        String url = task.getUrl();
+        if (url == null || url.replaceAll(" ", "").equals("")) return "";
+
+        String binPath = phantomjsConfig.getBinPathMac();
+        String netsniffPath = phantomjsConfig.getNetsniffPathMac();
+        String cmd = binPath + " " + netsniffPath + " " + url;
+        log.info(cmd);
+        String result = ShellExecutor.runShell(cmd);
+
+        int startIndex = result.indexOf("{    \"log\": {");
+        if (startIndex < 0) return "";
+        result = result.substring(startIndex);//截取正式的json输出
+
+        task.setGmtModify(new Date());
+        task.setResultJson(result);
+        task.setExecuteTimes(task.getExecuteTimes() == null ? 0 + 1 : task.getExecuteTimes() + 1);
+
+        lazyTaskDao.save(task);
         return result;
     }
 

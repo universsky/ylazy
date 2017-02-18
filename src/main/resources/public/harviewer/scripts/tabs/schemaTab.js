@@ -1,0 +1,3 @@
+/* See license.txt for terms of usage */
+
+define("tabs/schemaTab",["domplate/domplate","domplate/tabView","core/lib","i18n!nls/harViewer","syntax-highlighter/shCore","core/trace"],function(Domplate,TabView,Lib,Strings,dp,Trace){with(Domplate){function SchemaTab(){}return SchemaTab.prototype={id:"Schema",label:Strings.schemaTabLabel,bodyTag:PRE({"class":"javascript:nocontrols:",name:"code"}),onUpdateBody:function(e,t){$.ajax({url:"scripts/preview/harSchema.js",context:this,success:function(e){var n=t.firstChild;n.innerHTML=e,dp.SyntaxHighlighter.HighlightAll(n)},error:function(e,t,n){Trace.error("SchemaTab.onUpdateBody; ERROR ",e,t,n)}})}},SchemaTab}});

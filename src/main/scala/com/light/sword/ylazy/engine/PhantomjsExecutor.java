@@ -16,7 +16,7 @@ import java.util.Map;
  */
 @Service
 public class PhantomjsExecutor {
-    static Logger log = LoggerFactory.getLogger(ShellExecutor.class);
+    static Logger log = LoggerFactory.getLogger(PhantomjsExecutor.class);
 
     @Autowired
     PhantomjsConfig phantomjsConfig;

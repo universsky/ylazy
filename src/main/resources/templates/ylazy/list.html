@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="form-group">
-                        <button id='newTaskBtn' type="button" class="btn btn-success">
+                        <button id='newTaskBtn' type="button" class="btn-sm btn-success">
                             <i class="fa fa-plus"></i>
                             添加
                         </button>
@@ -52,15 +52,15 @@
                 </div>
                 <div class="box-body">
                     <table id="dataTable"
-                           class="table table-hover table-condensed table-responsive">
+                           class="table table-hover table-condensed table-responsive" style="font-size: 10px;">
                         <thead>
                         <tr>
                             <th>Id</th>
                             <th>名称</th>
                             <th>URL</th>
                             <th>更新时间</th>
-                            <th></th>
-                            <th></th>
+                            <th>执行结果</th>
+                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -68,7 +68,7 @@
                         <tr>
                             <td>$!t.id</td>
                             <td>$!t.name</td>
-                            <td>$!t.url</td>
+                            <td><a target="_blank" href="$!t.url">$!t.url</a></td>
                             <td>$!DateTool.format('yyyy-MM-dd HH:mm:ss', $t.gmtModify)</td>
                             <td>
                                 <a target="_blank"
@@ -239,7 +239,7 @@
             order: [[3, "desc"]],
             "aLengthMenu": [7, 10, 20, 50, 100, 200],
             language: {
-                "search": "<div style='border-radius:10px;margin-left:auto;margin-right:2px;width:760px;'>_INPUT_ &nbsp;<span class='btn btn-primary'>搜索</span></div>",
+                "search": "<div style='border-radius:10px;margin-left:auto;margin-right:2px;width:760px;'>_INPUT_ &nbsp;<span class='btn-sm btn-success'>搜索</span></div>",
 
                 paginate: {//分页的样式内容
                     previous: "上一页",

@@ -47,6 +47,7 @@ public class PhantomjsExecutor {
     /**
      * 执行引擎debugTest接口用
      * 不存入数据库
+     *
      * @param url
      * @return
      */
@@ -63,6 +64,7 @@ public class PhantomjsExecutor {
     /**
      * 执行引擎
      * 入库
+     *
      * @param id
      * @return
      */
@@ -73,8 +75,9 @@ public class PhantomjsExecutor {
         String url = task.getUrl();
         if (url == null || url.replaceAll(" ", "").equals("")) return "";
 
-        String binPath = phantomjsConfig.getBinPathMac();
-        String netsniffPath = phantomjsConfig.getNetsniffPathMac();
+        String binPath = getBinPath();
+        String netsniffPath = getNetsniffPath();
+
         String cmd = binPath + " " + netsniffPath + " " + url;
         log.info(cmd);
         String result = ShellExecutor.runShell(cmd);
@@ -90,5 +93,50 @@ public class PhantomjsExecutor {
         lazyTaskDao.save(task);
         return result;
     }
+
+    private String getBinPath() {
+        String binPath = "";
+        if (isLinux()) {
+            binPath = phantomjsConfig.getBinPathLinux();
+        }
+        if (isMacOS()) {
+            binPath = phantomjsConfig.getBinPathMac();
+        }
+        if (isWindows()) {
+            binPath = phantomjsConfig.getBinPathWindows();
+        }
+        return binPath;
+    }
+
+    private String getNetsniffPath() {
+        String netsniffPath = "";
+        if (isLinux()) {
+            netsniffPath = phantomjsConfig.getNetsniffPathLinux();
+        }
+        if (isMacOS()) {
+            netsniffPath = phantomjsConfig.getNetsniffPathMac();
+        }
+        if (isWindows()) {
+            netsniffPath = phantomjsConfig.getNetsniffPathWindows();
+        }
+        return netsniffPath;
+    }
+
+
+    public boolean isLinux() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        return osName.indexOf("linux") >= 0;
+    }
+
+    public boolean isMacOS() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        return osName.indexOf("mac") >= 0 && osName.indexOf("os") > 0;
+    }
+
+    public boolean isWindows() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        return osName.indexOf("windows") >= 0;
+    }
+
 
 }

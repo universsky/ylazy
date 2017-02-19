@@ -12,6 +12,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class PhantomjsConfig {
     private String binPathMac;
     private String netsniffPathMac;
+    private String binPathLinux;
+    private String netsniffPathLinux;
+    private String binPathWindows;
+    private String netsniffPathWindows;
 
     public String getBinPathMac() {
         return binPathMac;
@@ -27,5 +31,37 @@ public class PhantomjsConfig {
 
     public void setNetsniffPathMac(String netsniffPathMac) {
         this.netsniffPathMac = netsniffPathMac;
+    }
+
+    public String getBinPathLinux() {
+        return binPathLinux;
+    }
+
+    public void setBinPathLinux(String binPathLinux) {
+        this.binPathLinux = binPathLinux;
+    }
+
+    public String getNetsniffPathLinux() {
+        return netsniffPathLinux;
+    }
+
+    public void setNetsniffPathLinux(String netsniffPathLinux) {
+        this.netsniffPathLinux = netsniffPathLinux;
+    }
+
+    public String getBinPathWindows() {
+        return binPathWindows;
+    }
+
+    public void setBinPathWindows(String binPathWindows) {
+        this.binPathWindows = binPathWindows;
+    }
+
+    public String getNetsniffPathWindows() {
+        return netsniffPathWindows;
+    }
+
+    public void setNetsniffPathWindows(String netsniffPathWindows) {
+        this.netsniffPathWindows = netsniffPathWindows;
     }
 }

@@ -35,6 +35,8 @@ https://github.com/universsky/ylazy
 
 ---
 
+<img src="https://github.com/universsky/ylazy/blob/master/src/main/resources/public/images/ylazy_logo.png">
+
 <img src="https://github.com/universsky/ylazy/blob/master/YLazy.png">
 
 <img src="https://github.com/universsky/ylazy/blob/master/Harviewer.png">

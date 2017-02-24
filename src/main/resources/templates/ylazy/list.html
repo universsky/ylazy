@@ -69,10 +69,12 @@
                             <td>$!t.id</td>
                             <td>$!t.name</td>
                             <td><a target="_blank" href="$!t.url">$!t.url</a></td>
-                            <td>$!DateTool.format('yyyy-MM-dd HH:mm:ss', $t.gmtModify)</td>
+                            #set($testTime=$!DateTool.format('yyyy-MM-dd HH:mm:ss', $t.gmtModify))
+                            <td>$testTime</td>
                             <td>
-                                <a target="_blank"
-                                   href="harviewer/index.htm?path=http://$domainName:$port/result/$!t.id">查看</a>
+                                <button onclick='reportDetail("$testTime","$t.url",$t.id)' type="button" class="btn-sm btn-link">
+                                    查看
+                                </button>
                             </td>
                             <td>
                                 <button id='btn-$t.id'
@@ -97,6 +99,15 @@
 
 
 <script>
+    function reportDetail(testTime, url, id) {
+        var detailUrl = "harviewer/index.htm?testTime=" + encodeURIComponent(testTime) +
+            "&testUrl=" + url +
+            "&path=http://$domainName:$port/result/" + id;
+
+        window.open(detailUrl, "_blank");
+
+    }
+
     function runTest(id, thisBtn) {
         $(thisBtn).button('loading')
         $(thisBtn).attr('disabled', 'disabled')
@@ -123,9 +134,10 @@
                             cssClass: 'con_btn',
                             action: function (dialogRef) {
                                 dialogRef.close();
-                                var hostName = "http://$domainName:$port";
-                                var openUrl = hostName + "/harviewer/index.htm?path=" + hostName + "/result/" + id;
-                                window.open(openUrl);
+                                location.reload();
+//                                var hostName = "http://$domainName:$port";
+//                                var openUrl = hostName + "/harviewer/index.htm?path=" + hostName + "/result/" + id;
+//                                window.open(openUrl);
                             }
                         }, {
                             label: '取消',

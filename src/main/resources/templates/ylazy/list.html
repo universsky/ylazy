@@ -84,6 +84,7 @@
                                         autocomplete="off"
                                         onclick='runTest($t.id,this)'>运行
                                 </button>
+                                <p id="msg-$t.id"></p>
                             </td>
                         </tr>
                         #end
@@ -109,8 +110,9 @@
     }
 
     function runTest(id, thisBtn) {
-        $(thisBtn).button('loading')
-        $(thisBtn).attr('disabled', 'disabled')
+        $(thisBtn).button('loading');
+        $(thisBtn).attr('disabled', 'disabled');
+        var msgId='msg-'+id;
 
         /**
          * 运行任务
@@ -122,53 +124,55 @@
             success: function (data) {
                 if (data) {
                     $(thisBtn).button('reset');
+                    $(msgId).html('执行成功');
 
-                    BootstrapDialog.show({
-                        title: '运行任务',
-                        message: '执行成功',
-                        type: BootstrapDialog.TYPE_DEFAULT,
-                        closable: false,
-                        cssClass: 'dialog_mar',
-                        buttons: [{
-                            label: '确认',
-                            cssClass: 'con_btn',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                                location.reload();
-//                                var hostName = "http://$domainName:$port";
-//                                var openUrl = hostName + "/harviewer/index.htm?path=" + hostName + "/result/" + id;
-//                                window.open(openUrl);
-                            }
-                        }, {
-                            label: '取消',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                            }
-                        }]
-                    });
+//                    BootstrapDialog.show({
+//                        title: '运行任务',
+//                        message: '执行成功',
+//                        type: BootstrapDialog.TYPE_DEFAULT,
+//                        closable: false,
+//                        cssClass: 'dialog_mar',
+//                        buttons: [{
+//                            label: '确认',
+//                            cssClass: 'con_btn',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                                location.reload();
+////                                var hostName = "http://$domainName:$port";
+////                                var openUrl = hostName + "/harviewer/index.htm?path=" + hostName + "/result/" + id;
+////                                window.open(openUrl);
+//                            }
+//                        }, {
+//                            label: '取消',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                            }
+//                        }]
+//                    });
 
                 } else {
                     $(thisBtn).button('reset');
+                    $(msgId).html('执行失败');
 
-                    BootstrapDialog.show({
-                        title: '运行任务',
-                        message: '执行失败',
-                        type: BootstrapDialog.TYPE_DANGER,
-                        closable: false,
-                        cssClass: 'dialog_mar',
-                        buttons: [{
-                            label: '确认',
-                            cssClass: 'con_btn',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                            }
-                        }, {
-                            label: '取消',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                            }
-                        }]
-                    });
+//                    BootstrapDialog.show({
+//                        title: '运行任务',
+//                        message: '执行失败',
+//                        type: BootstrapDialog.TYPE_DANGER,
+//                        closable: false,
+//                        cssClass: 'dialog_mar',
+//                        buttons: [{
+//                            label: '确认',
+//                            cssClass: 'con_btn',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                            }
+//                        }, {
+//                            label: '取消',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                            }
+//                        }]
+//                    });
                 }
             }
         });

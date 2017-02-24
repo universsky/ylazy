@@ -58,9 +58,11 @@
                             <th>Id</th>
                             <th>名称</th>
                             <th>URL</th>
+                            <th>运行次数</th>
                             <th>更新时间</th>
                             <th>执行结果</th>
                             <th>操作</th>
+                            <th>运行状态</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -69,10 +71,14 @@
                             <td>$!t.id</td>
                             <td>$!t.name</td>
                             <td><a target="_blank" href="$!t.url">$!t.url</a></td>
-                            <td>$!DateTool.format('yyyy-MM-dd HH:mm:ss', $t.gmtModify)</td>
+                            <td>$!t.executeTimes</td>
+                            #set($testTime=$!DateTool.format('yyyy-MM-dd HH:mm:ss', $t.gmtModify))
+                            <td>$testTime</td>
                             <td>
-                                <a target="_blank"
-                                   href="harviewer/index.htm?path=http://$domainName:$port/result/$!t.id">查看</a>
+                                <button onclick='reportDetail("$testTime","$t.url",$t.id)' type="button"
+                                        class="btn-sm btn-link">
+                                    查看
+                                </button>
                             </td>
                             <td>
                                 <button id='btn-$t.id'
@@ -82,7 +88,9 @@
                                         autocomplete="off"
                                         onclick='runTest($t.id,this)'>运行
                                 </button>
+                                <p id="msg-$t.id"></p>
                             </td>
+                            <td id="result-$t.id"></td>
                         </tr>
                         #end
                         </tbody>
@@ -97,9 +105,19 @@
 
 
 <script>
+    function reportDetail(testTime, url, id) {
+        var detailUrl = "harviewer/index.htm?testTime=" + encodeURIComponent(testTime) +
+            "&testUrl=" + url +
+            "&path=http://$domainName:$port/result/" + id;
+
+        window.open(detailUrl, "_blank");
+
+    }
+
     function runTest(id, thisBtn) {
-        $(thisBtn).button('loading')
-        $(thisBtn).attr('disabled', 'disabled')
+        $(thisBtn).button('loading');
+        $(thisBtn).attr('disabled', 'disabled');
+        var resultId = '#result-' + id;
 
         /**
          * 运行任务
@@ -111,52 +129,55 @@
             success: function (data) {
                 if (data) {
                     $(thisBtn).button('reset');
+                    $(resultId).html('<p style="color: #00a65a;font-size: 12px;">执行成功</p>');
 
-                    BootstrapDialog.show({
-                        title: '运行任务',
-                        message: '执行成功',
-                        type: BootstrapDialog.TYPE_DEFAULT,
-                        closable: false,
-                        cssClass: 'dialog_mar',
-                        buttons: [{
-                            label: '确认',
-                            cssClass: 'con_btn',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                                var hostName = "http://$domainName:$port";
-                                var openUrl = hostName + "/harviewer/index.htm?path=" + hostName + "/result/" + id;
-                                window.open(openUrl);
-                            }
-                        }, {
-                            label: '取消',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                            }
-                        }]
-                    });
+//                    BootstrapDialog.show({
+//                        title: '运行任务',
+//                        message: '执行成功',
+//                        type: BootstrapDialog.TYPE_DEFAULT,
+//                        closable: false,
+//                        cssClass: 'dialog_mar',
+//                        buttons: [{
+//                            label: '确认',
+//                            cssClass: 'con_btn',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                                location.reload();
+////                                var hostName = "http://$domainName:$port";
+////                                var openUrl = hostName + "/harviewer/index.htm?path=" + hostName + "/result/" + id;
+////                                window.open(openUrl);
+//                            }
+//                        }, {
+//                            label: '取消',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                            }
+//                        }]
+//                    });
 
                 } else {
                     $(thisBtn).button('reset');
+                    $(resultId).html('<p style="color:red;font-size: 12px;">执行失败</p>');
 
-                    BootstrapDialog.show({
-                        title: '运行任务',
-                        message: '执行失败',
-                        type: BootstrapDialog.TYPE_DANGER,
-                        closable: false,
-                        cssClass: 'dialog_mar',
-                        buttons: [{
-                            label: '确认',
-                            cssClass: 'con_btn',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                            }
-                        }, {
-                            label: '取消',
-                            action: function (dialogRef) {
-                                dialogRef.close();
-                            }
-                        }]
-                    });
+//                    BootstrapDialog.show({
+//                        title: '运行任务',
+//                        message: '执行失败',
+//                        type: BootstrapDialog.TYPE_DANGER,
+//                        closable: false,
+//                        cssClass: 'dialog_mar',
+//                        buttons: [{
+//                            label: '确认',
+//                            cssClass: 'con_btn',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                            }
+//                        }, {
+//                            label: '取消',
+//                            action: function (dialogRef) {
+//                                dialogRef.close();
+//                            }
+//                        }]
+//                    });
                 }
             }
         });

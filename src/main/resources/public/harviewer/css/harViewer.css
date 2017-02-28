@@ -161,7 +161,7 @@
     font-style: normal;
     border-bottom: 1px solid #EEEEEE;
     padding: 0 3px 0 3px;
-    display: none;
+    /*display: none;*/
 }
 
 .toolbarButton, .toolbarSeparator {
@@ -1231,12 +1231,10 @@ body[hResizing="true"] .netInfoHtmlPreview {
     font-size: 11.7px;
     font-style: normal;
     font-weight: 400;
-    display: none;
 }
 
 .homeBody {
     padding: 8px;
-    display: none;
 }
 
 /* See license.txt for terms of usage */

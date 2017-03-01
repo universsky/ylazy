@@ -3,12 +3,21 @@
 <head>
     <title>YLazy任务运行结果</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <link rel="stylesheet" href="css/harViewer.css" type="text/css">
+    <link rel="stylesheet" href="css/harViewer.css?v" type="text/css">
+    <link rel="stylesheet" href="ylazy.css?v">
 </head>
+
+<div id="reportSummary" class="reportSummary"></div>
+<div id="reportDetail" class="reportDetail"></div>
+
 <body class="harBody">
-    <div id="content" version="2.0.17"></div>
-    <script src="scripts/jquery.js"></script>
-    <script data-main="scripts/harViewer" src="scripts/require.js"></script>
-    <!--<?php include("ga.php") ?>-->
+
+<div id="content" version="2.0.17"></div>
+<script src="scripts/jquery.js"></script>
+<script data-main="scripts/harViewer" src="scripts/require.js" defer></script>
+<!--<?php include("ga.php") ?>-->
+
+
+<script src="ylazy.js?v" defer></script>
 </body>
 </html>

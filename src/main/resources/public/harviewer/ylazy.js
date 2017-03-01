@@ -25,6 +25,16 @@ function setReportSummaryHtml(testUrl, testTime) {
     $('#reportSummary').html(reportSummaryHtml);
 }
 
+function getHost(url) {
+    var host = "null";
+    var regex = /.*\:\/\/([^\/]*).*/;
+    var match = url.match(regex);
+    if(typeof match != "undefined"&& null != match){
+        host = match[1];
+    }
+    return host;
+}
+
 function setReportDetailHtml(pathUrl) {
     $.ajax({
         url: pathUrl,
@@ -70,6 +80,124 @@ function setReportDetailHtml(pathUrl) {
                 '<td>' + totalReceiveTime + '</td>' +
                 '</tr></tbody></table>';
 
+
+            // 资源类型
+            var contentTypes=[];
+            var htmlType = {type : "html",size : 0,num : 0};
+            var imageType = {type : "image",size : 0,num : 0};
+            var jsType = {type : "js",size : 0,num : 0};
+            var otherType={type : "other ",size : 0,num : 0};
+
+            // dns类型
+            var domains = [];
+            // 图片
+            var imgs = [];
+
+            for(var i = 0;i < length ;i++){
+                //响应资源大小
+                var responseSize = entries[i].response.bodySize;
+
+                //响应头信息
+                var headers = entries[i].response.headers;
+
+                //请求url
+                var reqUrl = entries[i].request.url;
+
+                //返回码
+                var returnCode = entries[i].response.status;
+
+                //请求总时间
+                var resonseTime = entries[i].time;
+
+                //获取压缩类型
+                var compress="";
+                for(var j = 0;j < headers.length ;j++){
+                    if(headers[j].name.indexOf("Content-Encoding") > -1){
+                        compress = headers[j].value;
+                        break;
+                    }
+                }
+
+                for(var j = 0;j < headers.length ;j++){
+                    var header = headers[j];
+                    if(header.name.indexOf("Content-Type") > -1){
+                        if(header.value.indexOf("html") >- 1){
+                            htmlType.num++;
+                            htmlType.size += responseSize;
+
+                        }else if(header.value.indexOf("javascript") >- 1){
+                            jsType.num++;
+                            jsType.size += responseSize;
+
+                        }else if(header.value.indexOf("image") >- 1){
+                            imageType.num++;
+                            imageType.size += responseSize;
+                            //imgs
+                            imgs[imgs.length]={url : reqUrl,size : responseSize,compress : compress,
+                                cache : "",time : resonseTime, returnCode:returnCode,type: header.value};
+
+
+                        }else{
+                            otherType.num++;
+                            otherType.size += responseSize;
+
+                        }
+                        break;
+                    }
+
+                }
+                //domain
+                var reqDomain = getHost(reqUrl);
+                var domainExists = false;
+                if(domains.length > 0){
+                    for(var k = 0 ; k< domains.length;k++){
+                        if(domains[k].name.indexOf(reqDomain) > -1 ){
+                            domains[k].size += responseSize;
+                            domains[k].num++;
+                            domainExists = true;
+                            break;
+                        }
+                    }
+                }
+                if(domains.length==0 || !domainExists){
+                    domains[domains.length] = {name : reqDomain,size : responseSize,num : 1};
+                }
+            }
+
+            contentTypes[0] = htmlType;
+            contentTypes[1] = imageType;
+            contentTypes[2] = jsType;
+            contentTypes[3] = otherType;
+
+            //资源类型表格展示
+            reportDetailHtml += '<table class="table table-bordered"><thead><th>资源类型</th><th>大小(KB)</th><th>数量(个)</th></thead>' +
+                '<tbody>';
+            for(var i =0 ; i<contentTypes.length;i++ ){
+                reportDetailHtml  += "<tr><td>" + contentTypes[i].type + "</td><td>" + contentTypes[i].size+"</td><td>" + contentTypes[i].num + "</td></tr>";
+
+            }
+            reportDetailHtml += '</tbody></table>';
+
+
+            //域名资源展示
+            reportDetailHtml += '<table class="table table-bordered"><thead><th>域名类型</th><th>大小(KB)</th><th>数量(个)</th></thead>' +
+                '<tbody>';
+            for(var i =0 ; i<domains.length;i++ ){
+                reportDetailHtml  += "<tr><td>" + domains[i].name + "</td><td>" + domains[i].size+"</td><td>" + domains[i].num + "</td></tr>";
+
+            }
+            reportDetailHtml += '</tbody></table>';
+
+
+            //图片资源展示
+            reportDetailHtml += '<table class="table table-bordered"><thead><th>图片资源url</th><th>大小</th><th>压缩</th><th>缓存</th><th>耗时(ms)</th><th>返回码</th><th>类型</th></thead>' +
+                '<tbody>';
+            for(var i =0 ; i<imgs.length;i++ ){
+                reportDetailHtml  += "<tr><td style='width: 50%;word-break:break-all'><a target='_blank' href='" + imgs[i].url + "'>"+imgs[i].url+"</a></td><td>"+ imgs[i].size + "</td><td>"+ imgs[i].compress + "</td><td>"+ imgs[i].cache + "</td><td>"+ imgs[i].time + "</td><td>" + imgs[i].returnCode+"</td><td>" + imgs[i].type + "</td></tr>";
+
+            }
+            reportDetailHtml += '</tbody></table>';
+
             $('#reportDetail').html(reportDetailHtml);
 
         },
@@ -78,6 +206,8 @@ function setReportDetailHtml(pathUrl) {
         }
     });
 }
+
+
 
 $(function () {
     initYlazyReport();
@@ -106,6 +236,5 @@ Date.prototype.format = function (format) {
     }
     return format;
 }
-
 
 
